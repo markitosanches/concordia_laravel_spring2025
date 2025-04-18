@@ -1,8 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BlogController;
-
+use App\Http\Controllers\TaskController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,8 +17,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/home',[BlogController::class, 'index']);
-Route::get('/about',[BlogController::class, 'about']);
-Route::get('/article',[BlogController::class, 'article']); // this is the post.html
-Route::get('/contact',[BlogController::class, 'contact']);
-Route::post('/contact',[BlogController::class, 'contactForm']);
+Route::get('/tasks', [TaskController::class, 'index'])->name('task.index');
+Route::get('/task/{task}', [TaskController::class, 'show'])->name('task.show');
