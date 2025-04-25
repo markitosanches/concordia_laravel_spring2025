@@ -23,7 +23,7 @@ class TaskController extends Controller
      */
     public function create()
     {
-        //
+        return view('task.create');
     }
 
     /**
@@ -31,7 +31,27 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+       // return $request;
+
+        $request->validate([
+            'title' => 'required|max:255',
+            'description' => 'required',
+            'completed' => 'nullable|boolean',
+            'due_date' => 'nullable|date',
+        ]);
+
+        // return redirect->back()->withErrors(['title.....'])->withInput()
+
+        $task = Task::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'completed' => $request->input('completed', false),
+            'due_date' => $request->due_date,
+            'user_id' => 1
+        ]);
+
+        return redirect()->route('task.show', $task->id)->withSuccess('Task created successfully!');
     }
 
     /**
@@ -39,7 +59,8 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-       //return $task;, 
+        //select * from tasks where id = $task;
+      
        return view('task.show', ['task' => $task]);
     }
 
@@ -48,7 +69,7 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        //
+      return view('task.edit', ['task'=>$task]);
     }
 
     /**
@@ -56,7 +77,21 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        //
+        $request->validate([
+            'title' => 'required|max:255',
+            'description' => 'required',
+            'completed' => 'nullable|boolean',
+            'due_date' => 'nullable|date',
+        ]);
+
+        $task->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'completed' => $request->input('completed', false),
+            'due_date' => $request->due_date
+        ]);
+
+        return redirect()->route('task.show', $task->id)->withSuccess('Task updated successfully!');
     }
 
     /**
@@ -64,6 +99,54 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        $task->delete();
+        return redirect()->route('task.index')->withSuccess('Task deleted successfully!');
+    }
+
+    public function completed($completed){
+        $tasks = Task::where('completed', $completed)->get();
+        return view('task.index', ['tasks' => $tasks]);
+    }
+
+    public function query(){
+        //select * from tasks
+        //$task = Task::all();
+        //$task = Task::select('title', 'description')->get();
+        // $task = Task::select()->get();
+        // $task = Task::select()->first();
+
+        //SELECT * FROM tasks order by title
+        $task = Task::select()->orderby('title')->get();
+
+        //SELECT * FROM tasks where id = ?;
+        $task = Task::find(3);
+        $task = Task::where('id', 3)->first();
+
+        //SELECT * FROM tasks WHERE title LIKE "e%";
+        $task = Task::where('title', 'like', 'e%')->get();
+
+        //SELECT * FROM tasks WHERE title LIKE "e%" AND user_id = 5;
+        $task = Task::where('title', 'like', 'e%')
+        ->where('user_id', '=', 5)
+        ->get();
+
+        //SELECT * FROM tasks WHERE title LIKE "e%" OR user_id = 4;
+        $task = Task::where('title', 'like', 'e%')
+        ->orwhere('user_id', '=', 4)
+        ->get();
+
+        //SELECT * FROM tasks INNER JOIN users on users.id = tasks.user_id
+        
+        $task = Task::select()
+        ->join('users', 'user_id', '=', 'users.id')
+        ->get();
+
+        // SELECT count(id) FROM tasks
+        $task = Task::count('id');
+
+        // SELECT count(id) FROM tasks where user_id = 1;
+        $task = Task::where('user_id', '=', 1)->count('id');
+
+        return $task;
     }
 }
