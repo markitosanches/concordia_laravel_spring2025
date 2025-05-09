@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Category;
+
 
 class TaskController extends Controller
 {
@@ -23,7 +26,9 @@ class TaskController extends Controller
      */
     public function create()
     {
-        return view('task.create');
+        $categories = Category::categories();
+
+        return view('task.create', ['categories'=>$categories]);
     }
 
     /**
@@ -39,6 +44,7 @@ class TaskController extends Controller
             'description' => 'required',
             'completed' => 'nullable|boolean',
             'due_date' => 'nullable|date',
+            'category_id' => 'required|exists:categories,id'
         ]);
 
         // return redirect->back()->withErrors(['title.....'])->withInput()
@@ -48,7 +54,8 @@ class TaskController extends Controller
             'description' => $request->description,
             'completed' => $request->input('completed', false),
             'due_date' => $request->due_date,
-            'user_id' => 1
+            'user_id' => Auth::user()->id,
+            'category_id' => $request->category_id
         ]);
 
         return redirect()->route('task.show', $task->id)->withSuccess('Task created successfully!');
@@ -60,7 +67,6 @@ class TaskController extends Controller
     public function show(Task $task)
     {
         //select * from tasks where id = $task;
-      
        return view('task.show', ['task' => $task]);
     }
 
