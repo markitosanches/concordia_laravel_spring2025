@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function() {
     Route::put('/edit/task/{task}', [TaskController::class, 'update'])->name('task.update');
     Route::delete('/task/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
     Route::get('/completed/tasks/{completed}', [TaskController::class, 'completed'])->name('task.completed');
+    Route::get('/task-pdf/{task}', [TaskController::class, 'pdf'])->name('task.pdf');
 
     Route::get('/query', [TaskController::class, 'query']);
 
@@ -46,3 +47,8 @@ Route::post('/registration', [UserController::class, 'store'])->name('user.store
 Route::get('/login', [AuthController::class, 'create'])->name('login');
 Route::post('/login', [AuthController::class, 'store'])->name('login.store');
 Route::get('/logout', [AuthController::class, 'destroy'])->name('logout');
+
+Route::get('/password/forgot', [UserController::class, 'forgot'])->name('user.forgot');
+Route::post('/password/forgot', [UserController::class, 'email'])->name('user.email');
+Route::get('/password/reset/{user}/{token}', [UserController::class, 'reset'])->name('user.reset');
+Route::put('/password/reset/{user}/{token}', [UserController::class, 'resetUpdate'])->name('user.reset.update');
