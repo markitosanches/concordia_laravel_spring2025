@@ -22,9 +22,11 @@
                     <a href="{{ route('task.edit', $task->id) }}" class="btn btn-sm btn-outline-success">Edit</a>
                     <!-- Button trigger modal -->
                      <a href="{{ route('task.pdf', $task->id) }}" class="btn btn-sm btn-outline-warning">PDF</a>
-                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    @can('delete-task')
+                     <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
                     Delete
                     </button>
+                    @endcan
                 </div>
             </div>
         </div>

@@ -25,9 +25,11 @@
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="{{ route('task.index')}}">@lang('Tasks')</a>
                         </li>
+                        @can('view-users')
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('user.index')}}">@lang('Users')</a>
                         </li>
+                        @endcan
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
                                 aria-expanded="false">@lang('Tasks')</a>
@@ -62,8 +64,9 @@
         </nav>
     </header>
     <div class="container flex-grow-1">
+        
         @auth
-            <p>@lang('lang.text_welcome'), {{ Auth::user()->name }}</p>
+            <p>@lang('lang.text_welcome'), {{ Auth::user()->name }} @role('Admin') - Admin @endrole</p>
         @else
             <p>@lang('lang.text_login_msg')</p>
         @endauth

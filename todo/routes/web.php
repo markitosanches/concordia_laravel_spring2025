@@ -24,23 +24,28 @@ Route::get('/', function () {
 Route::get('/lang/{locale}', [SetLocaleController::class, 'index'])->name('lang');
 
 Route::middleware('auth')->group(function() {
-    Route::get('/tasks', [TaskController::class, 'index'])->name('task.index');
+    Route::get('/tasks', [TaskController::class, 'index'])->name('task.index')->middleware('can:view-task');
     Route::get('/task/{task}', [TaskController::class, 'show'])->name('task.show');
     Route::get('/create/task', [TaskController::class, 'create'])->name('task.create');
     Route::post('/create/task', [TaskController::class, 'store'])->name('task.store');
     Route::get('/edit/task/{task}', [TaskController::class, 'edit'])->name('task.edit');
     Route::put('/edit/task/{task}', [TaskController::class, 'update'])->name('task.update');
-    Route::delete('/task/{task}', [TaskController::class, 'destroy'])->name('task.destroy');
+    Route::delete('/task/{task}', [TaskController::class, 'destroy'])->name('task.destroy')->middleware('can:delete-task');
     Route::get('/completed/tasks/{completed}', [TaskController::class, 'completed'])->name('task.completed');
     Route::get('/task-pdf/{task}', [TaskController::class, 'pdf'])->name('task.pdf');
 
     Route::get('/query', [TaskController::class, 'query']);
 
+});
+
+
+Route::middleware('role:Admin')->group(function(){
     Route::get('/create/category', [CategoryController::class, 'create'])->name('category.create');
     Route::post('/create/category', [CategoryController::class, 'store'])->name('category.store');
 });
 
-Route::get('/users', [UserController::class, 'index'])->name('user.index')->middleware('auth');
+
+Route::get('/users', [UserController::class, 'index'])->name('user.index')->middleware('auth')->middleware('can:view-users');
 Route::get('/registration', [UserController::class, 'create'])->name('user.create');
 Route::post('/registration', [UserController::class, 'store'])->name('user.store');
 
